@@ -474,31 +474,18 @@ func (a *App) setupGlobalKeybindings() error {
 
 		kind := a.dialog.ProfileConfirmKind
 		sessionPath := a.dialog.ProfileSessionPath
+		if cwdView, err2 := g.View("profile-cwd"); err2 == nil {
+			sessionPath = strings.TrimSpace(cwdView.TextArea.GetContent())
+		}
 		a.closeProfileDialog(g)
 
 		switch kind {
-		case "session":
+		case "session", "session_cwd":
 			go func() {
 				if a.sessions == nil {
 					return
 				}
 				err := a.sessions.CreateWithOpts(sessionPath, selectedProfile, options)
-				a.gui.Update(func(g *gocui.Gui) error {
-					if err != nil {
-						a.showError(g, fmt.Sprintf("Error: %v", err))
-					} else {
-						a.setStatus(g, "Session created")
-						a.moveCursorToLastSession()
-					}
-					return nil
-				})
-			}()
-		case "session_cwd":
-			go func() {
-				if a.sessions == nil {
-					return
-				}
-				err := a.sessions.CreateAtPaneCWDWithOpts(selectedProfile, options)
 				a.gui.Update(func(g *gocui.Gui) error {
 					if err != nil {
 						a.showError(g, fmt.Sprintf("Error: %v", err))
@@ -533,7 +520,7 @@ func (a *App) setupGlobalKeybindings() error {
 		return nil
 	}
 
-	for _, viewName := range []string{"profile-chooser", "profile-options"} {
+	for _, viewName := range []string{"profile-chooser", "profile-cwd", "profile-options"} {
 		if err := a.gui.SetKeybinding(viewName, gocui.KeyEnter, gocui.ModNone, profileDialogConfirm); err != nil {
 			return err
 		}
@@ -542,8 +529,24 @@ func (a *App) setupGlobalKeybindings() error {
 		}
 	}
 
-	// Tab: Profile chooser → Options → Profile chooser (loop)
+	// Tab: Profile chooser → [CWD →] Options → Profile chooser (loop)
 	if err := a.gui.SetKeybinding("profile-chooser", gocui.KeyTab, gocui.ModNone, func(g *gocui.Gui, v *gocui.View) error {
+		if _, err := g.View("profile-cwd"); err == nil {
+			a.dialog.ActiveField = "profile-cwd"
+			if _, err := g.SetCurrentView("profile-cwd"); err != nil && !isUnknownView(err) {
+				return err
+			}
+			return nil
+		}
+		a.dialog.ActiveField = "profile-options"
+		if _, err := g.SetCurrentView("profile-options"); err != nil && !isUnknownView(err) {
+			return err
+		}
+		return nil
+	}); err != nil {
+		return err
+	}
+	if err := a.gui.SetKeybinding("profile-cwd", gocui.KeyTab, gocui.ModNone, func(g *gocui.Gui, v *gocui.View) error {
 		a.dialog.ActiveField = "profile-options"
 		if _, err := g.SetCurrentView("profile-options"); err != nil && !isUnknownView(err) {
 			return err

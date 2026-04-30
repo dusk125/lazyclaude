@@ -57,6 +57,7 @@ type DialogState struct {
 	ProfileItems       []chooser.Item // list of profile items for chooser display
 	ProfileCursor      int            // cursor position in profile chooser
 	OptionsText        string         // options text input value (kept across re-renders)
+	CWDText            string         // CWD text input value (session_cwd only)
 	ProfileConfirmKind string         // "session" | "session_cwd" | "pm_session"
 	ProfileSessionPath string         // path passed to the session-creation call on confirm
 

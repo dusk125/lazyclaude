@@ -43,7 +43,7 @@ When collapsed, only the project name is shown.
 
 Create a new Claude Code session.
 `n` creates a session in the project directory.
-`N` creates a session in the current working directory.
+`N` creates a session with a directory input pre-filled with the current working directory.
 The session runs inside a lazyclaude-managed tmux window.
 
 ## delete_session

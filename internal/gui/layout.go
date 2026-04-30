@@ -1238,9 +1238,12 @@ func (a *App) showProfileDialog(g *gocui.Gui, confirmKind, sessionPath string) b
 	a.dialog.ProfileItems = items
 	a.dialog.ProfileCursor = defaultIdx
 	a.dialog.OptionsText = ""
+	a.dialog.CWDText = ""
 	a.dialog.ProfileConfirmKind = confirmKind
 	a.dialog.ProfileSessionPath = sessionPath
 	a.dialog.ActiveField = "profile-chooser"
+
+	showCWD := confirmKind == "session_cwd"
 
 	maxX, maxY := g.Size()
 	w := 50
@@ -1257,8 +1260,11 @@ func (a *App) showProfileDialog(g *gocui.Gui, confirmKind, sessionPath string) b
 	if chooserH > 10 {
 		chooserH = 10
 	}
-	// Total height: chooserH + 1(gap) + 3(options) + 2(hint)
+	// Total height: chooserH + 1(gap) + [3(cwd) + 1(gap)] + 3(options) + 2(hint)
 	totalH := chooserH + 1 + 3 + 2
+	if showCWD {
+		totalH += 3 + 1
+	}
 	startY := (maxY - totalH) / 2
 	if startY < 1 {
 		startY = 1
@@ -1280,7 +1286,34 @@ func (a *App) showProfileDialog(g *gocui.Gui, confirmKind, sessionPath string) b
 	setRoundedFrame(v)
 	renderProfileChooser(v, a.dialog.ProfileItems, a.dialog.ProfileCursor)
 
-	optionsY0 := chooserY1 + 1
+	nextY := chooserY1 + 1
+
+	if showCWD {
+		cwdY0 := nextY
+		cwdY1 := cwdY0 + 2
+		if cwdY1 >= maxY-2 {
+			cwdY1 = maxY - 3
+		}
+
+		vc, err := g.SetView("profile-cwd", x0, cwdY0, x0+w, cwdY1, 0)
+		if err != nil && !isUnknownView(err) {
+			a.closeProfileDialog(g)
+			return false
+		}
+		vc.Title = " Directory "
+		vc.Editable = true
+		vc.Editor = gocui.DefaultEditor
+		vc.Clear()
+		vc.TextArea.Clear()
+		for _, ch := range sessionPath {
+			vc.TextArea.TypeCharacter(string(ch))
+		}
+		vc.RenderTextArea()
+		setRoundedFrame(vc)
+		nextY = cwdY1 + 1
+	}
+
+	optionsY0 := nextY
 	optionsY1 := optionsY0 + 2
 	if optionsY1 >= maxY-2 {
 		optionsY1 = maxY - 3
@@ -1330,9 +1363,11 @@ func (a *App) closeProfileDialog(g *gocui.Gui) {
 	a.dialog.ActiveField = ""
 	a.dialog.ProfileItems = nil
 	a.dialog.OptionsText = ""
+	a.dialog.CWDText = ""
 	a.dialog.ProfileConfirmKind = ""
 	a.dialog.ProfileSessionPath = ""
 	g.DeleteView("profile-chooser")
+	g.DeleteView("profile-cwd")
 	g.DeleteView("profile-options")
 	g.DeleteView("profile-hint")
 	g.Cursor = false

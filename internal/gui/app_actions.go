@@ -527,9 +527,13 @@ func (a *App) CreateSessionAtCWD() {
 	if a.sessions == nil || a.HasActiveDialog() {
 		return
 	}
-	debugLog("CreateSessionAtCWD")
+	absPath, err := filepath.Abs(".")
+	if err != nil {
+		absPath = "."
+	}
+	debugLog("CreateSessionAtCWD: path=%q", absPath)
 	a.gui.Update(func(g *gocui.Gui) error {
-		if !a.showProfileDialog(g, "session_cwd", "") {
+		if !a.showProfileDialog(g, "session_cwd", absPath) {
 			a.showError(g, "Error: could not open profile dialog")
 		}
 		return nil
