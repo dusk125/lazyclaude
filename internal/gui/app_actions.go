@@ -593,11 +593,7 @@ func (a *App) LaunchLazygit() {
 	if a.sessions == nil {
 		return
 	}
-	s := a.currentSession()
-	if s == nil {
-		return
-	}
-	sess := *s
+	path := a.currentProjectRoot()
 	g := a.gui
 	if err := g.Suspend(); err != nil {
 		a.gui.Update(func(g *gocui.Gui) error {
@@ -606,7 +602,7 @@ func (a *App) LaunchLazygit() {
 		})
 		return
 	}
-	launchErr := a.sessions.LaunchLazygit(sess.Path)
+	launchErr := a.sessions.LaunchLazygit(path)
 	if err := g.Resume(); err != nil {
 		return
 	}
