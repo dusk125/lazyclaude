@@ -59,6 +59,7 @@ func (m *mockActions) PopupFocusNext()                  { m.record("PopupFocusNe
 func (m *mockActions) PopupFocusPrev()                  { m.record("PopupFocusPrev") }
 func (m *mockActions) PopupScrollDown()                 { m.record("PopupScrollDown") }
 func (m *mockActions) PopupScrollUp()                   { m.record("PopupScrollUp") }
+func (m *mockActions) PopupJumpToSession()              { m.record("PopupJumpToSession") }
 
 // FullScreenActions
 func (m *mockActions) IsFullScreen() bool           { return m.fullScreen }

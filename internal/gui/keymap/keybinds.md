@@ -181,6 +181,13 @@ Reject the tool execution request.
 Accept all pending tool notifications at once.
 `Y` processes all visible notification popups with acceptance.
 
+## popup_jump
+
+Jump the cursor to the session that produced the focused notification.
+`f` moves the cursor to the source session in the session list.
+The popup auto-hides because the cursor is now on the session it belongs to.
+Navigate away to see the popup again, or respond with `1`/`2`/`3` send keys.
+
 ## popup_suspend
 
 Hide the notification popup without responding.

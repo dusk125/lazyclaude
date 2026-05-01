@@ -65,6 +65,7 @@ func (m *mockPopupActions) PopupFocusNext()                  { m.record("PopupFo
 func (m *mockPopupActions) PopupFocusPrev()                  { m.record("PopupFocusPrev") }
 func (m *mockPopupActions) PopupScrollDown()                 { m.record("PopupScrollDown") }
 func (m *mockPopupActions) PopupScrollUp()                   { m.record("PopupScrollUp") }
+func (m *mockPopupActions) PopupJumpToSession()              { m.record("PopupJumpToSession") }
 
 // --- FullScreenActions mock (also implements ScrollActions for scroll dispatch) ---
 

@@ -854,6 +854,51 @@ func (a *App) PopupScrollUp() {
 	}
 }
 
+func (a *App) PopupJumpToSession() {
+	p := a.popups.ActivePopup()
+	if p == nil {
+		return
+	}
+	window := p.Window()
+	if window == "" {
+		return
+	}
+
+	// Ensure the target project is expanded so the session appears in the tree.
+	if a.sessions != nil {
+		for _, proj := range a.sessions.Projects() {
+			found := false
+			if proj.PM != nil && proj.PM.TmuxWindow == window {
+				found = true
+			}
+			if !found {
+				for _, s := range proj.Sessions {
+					if s.TmuxWindow == window {
+						found = true
+						break
+					}
+				}
+			}
+			if found && !proj.Expanded {
+				a.sessions.ToggleProjectExpanded(proj.ID)
+				a.refreshTreeNodes()
+				break
+			}
+		}
+	}
+
+	nodes := a.treeNodes()
+	for i, node := range nodes {
+		if node.Kind == SessionNode && node.Session != nil && node.Session.TmuxWindow == window {
+			a.cursor = i
+			a.clearError()
+			a.syncPluginProject()
+			a.suspendAllPopups()
+			return
+		}
+	}
+}
+
 // --- FullScreen ---
 
 func (a *App) ExitFullScreen() { a.exitFullScreen() }

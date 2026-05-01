@@ -43,6 +43,8 @@ func (h *PopupHandler) HandleKey(ev KeyEvent, actions PopupActions) HandlerResul
 			actions.PopupScrollDown()
 		case keymap.ActionPopupScrollUp:
 			actions.PopupScrollUp()
+		case keymap.ActionPopupJumpToSession:
+			actions.PopupJumpToSession()
 		}
 	}
 

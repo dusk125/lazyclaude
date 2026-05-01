@@ -723,6 +723,14 @@ func Default() *Registry {
 		Description: "Scroll notification up",
 		DocSection:  "popup_scroll",
 	})
+	r.Register(ActionDef{
+		Action:      ActionPopupJumpToSession,
+		Bindings:    []KeyBinding{{Rune: 'f'}},
+		Scope:       ScopePopup,
+		HintLabel:   "focus",
+		Description: "Jump to notification source session",
+		DocSection:  "popup_jump",
+	})
 
 	// --- FullScreen ---
 	r.Register(ActionDef{

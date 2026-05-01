@@ -43,6 +43,7 @@ type PopupActions interface {
 	PopupFocusPrev()
 	PopupScrollDown()
 	PopupScrollUp()
+	PopupJumpToSession()
 }
 
 // FullScreenActions provides fullscreen mode operations.

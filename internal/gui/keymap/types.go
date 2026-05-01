@@ -103,15 +103,16 @@ const (
 
 // --- Popup actions ---
 const (
-	ActionPopupAccept    KeyAction = "popup_accept"
-	ActionPopupAllow     KeyAction = "popup_allow"
-	ActionPopupReject    KeyAction = "popup_reject"
-	ActionPopupSuspend   KeyAction = "popup_suspend"
-	ActionPopupAcceptAll KeyAction = "popup_accept_all"
-	ActionPopupFocusNext KeyAction = "popup_focus_next"
-	ActionPopupFocusPrev KeyAction = "popup_focus_prev"
-	ActionPopupScrollDown KeyAction = "popup_scroll_down"
-	ActionPopupScrollUp  KeyAction = "popup_scroll_up"
+	ActionPopupAccept        KeyAction = "popup_accept"
+	ActionPopupAllow         KeyAction = "popup_allow"
+	ActionPopupReject        KeyAction = "popup_reject"
+	ActionPopupSuspend       KeyAction = "popup_suspend"
+	ActionPopupAcceptAll     KeyAction = "popup_accept_all"
+	ActionPopupFocusNext     KeyAction = "popup_focus_next"
+	ActionPopupFocusPrev     KeyAction = "popup_focus_prev"
+	ActionPopupScrollDown    KeyAction = "popup_scroll_down"
+	ActionPopupScrollUp      KeyAction = "popup_scroll_up"
+	ActionPopupJumpToSession KeyAction = "popup_jump_to_session"
 )
 
 // --- Help actions ---
