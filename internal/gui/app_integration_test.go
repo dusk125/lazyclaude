@@ -251,21 +251,30 @@ func TestFullScreen_PopupWorksInFullMode(t *testing.T) {
 	mock := &mockSessionProvider{
 		sessions: []gui.SessionItem{
 			{ID: "s1", Name: "test", Status: "Running", TmuxWindow: "@0"},
+			{ID: "s2", Name: "other", Status: "Running", TmuxWindow: "@1"},
 		},
 	}
 	app.SetSessions(mock)
 
-	// Enter full screen
+	// Enter full screen on s1
 	app.EnterFullScreenForTest("s1")
 	assert.True(t, app.IsFullScreenForTest())
 
-	// Show popup — should work identically to preview mode
+	// Popup from s1 (same session) should be auto-hidden in fullscreen
 	app.ShowToolPopupForTest(&model.ToolNotification{
 		ToolName: "Write",
 		Input:    `{"file_path":"/tmp/test.txt"}`,
 		Window:   "@0",
 	})
-	assert.True(t, app.HasPopupForTest())
+	assert.False(t, app.HasPopupForTest(), "popup from fullscreened session should be auto-hidden")
+
+	// Popup from s2 (different session) should be visible
+	app.ShowToolPopupForTest(&model.ToolNotification{
+		ToolName: "Bash",
+		Input:    `{"command":"ls"}`,
+		Window:   "@1",
+	})
+	assert.True(t, app.HasPopupForTest(), "popup from other session should be visible")
 
 	// Dismiss
 	app.DismissPopupForTest(gui.ChoiceAccept)
@@ -359,6 +368,7 @@ func TestFullScreen_PopupPreservesFullScreen(t *testing.T) {
 	mock := &mockSessionProvider{
 		sessions: []gui.SessionItem{
 			{ID: "s1", Name: "test", Status: "Running", TmuxWindow: "@0"},
+			{ID: "s2", Name: "other", Status: "Running", TmuxWindow: "@1"},
 		},
 	}
 	app.SetSessions(mock)
@@ -366,10 +376,10 @@ func TestFullScreen_PopupPreservesFullScreen(t *testing.T) {
 
 	assert.Equal(t, gui.StateFullScreen, app.StateForTest())
 
-	// Show popup
+	// Show popup from different session
 	app.ShowToolPopupForTest(&model.ToolNotification{
 		ToolName: "Write",
-		Window:   "@0",
+		Window:   "@1",
 	})
 	assert.True(t, app.HasPopupForTest())
 	// State should be preserved
@@ -407,6 +417,7 @@ func TestFullScreen_DoesNotForwardInPopup(t *testing.T) {
 	mock := &mockSessionProvider{
 		sessions: []gui.SessionItem{
 			{ID: "s1", Name: "test", Status: "Running", TmuxWindow: "@0"},
+			{ID: "s2", Name: "other", Status: "Running", TmuxWindow: "@1"},
 		},
 	}
 	app.SetSessions(mock)
@@ -414,7 +425,8 @@ func TestFullScreen_DoesNotForwardInPopup(t *testing.T) {
 	app.SetInputForwarder(fwd)
 
 	app.EnterFullScreenForTest("s1")
-	app.ShowToolPopupForTest(&model.ToolNotification{ToolName: "Write", Window: "@0"})
+	// Popup from different session — should block forwarding
+	app.ShowToolPopupForTest(&model.ToolNotification{ToolName: "Write", Window: "@1"})
 
 	// Keys should NOT be forwarded when popup is showing
 	app.ForwardKeyForTest('h')

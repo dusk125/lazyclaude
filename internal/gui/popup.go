@@ -17,7 +17,12 @@ const popupViewName = "tool-popup"
 const popupActionsViewName = "tool-popup-actions"
 
 // showToolPopup pushes a notification onto the popup stack.
+// In fullscreen mode, popups from the fullscreened session are skipped
+// entirely — the user can respond to Claude Code directly.
 func (a *App) showToolPopup(n *model.ToolNotification) {
+	if a.isFullscreenWindow(n.Window) {
+		return
+	}
 	a.popups.PushPopup(newPopupFromNotification(n))
 }
 

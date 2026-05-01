@@ -52,11 +52,11 @@ func (pc *PopupController) Count() int {
 	return len(pc.stack)
 }
 
-// VisibleCount returns non-suspended popup count.
+// VisibleCount returns the count of visible popups (not suspended, not hidden).
 func (pc *PopupController) VisibleCount() int {
 	c := 0
-	for _, e := range pc.stack {
-		if !e.suspended {
+	for i := range pc.stack {
+		if !pc.stack[i].suspended {
 			c++
 		}
 	}

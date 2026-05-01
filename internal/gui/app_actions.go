@@ -58,6 +58,26 @@ func (a *App) currentSession() *SessionItem {
 	return node.Session
 }
 
+// isFullscreenWindow reports whether the given tmux window belongs to the
+// session currently in fullscreen mode. Used to skip creating popups for
+// the active session — the user can respond to Claude Code directly.
+func (a *App) isFullscreenWindow(window string) bool {
+	if a.fullscreen == nil || !a.fullscreen.IsActive() || window == "" {
+		return false
+	}
+	sessionID := a.fullscreen.Target()
+	if sessionID == "" {
+		return false
+	}
+	nodes := a.treeNodes()
+	for _, node := range nodes {
+		if node.Kind == SessionNode && node.Session != nil && node.Session.ID == sessionID {
+			return node.Session.TmuxWindow == window
+		}
+	}
+	return false
+}
+
 // --- Tree operations ---
 
 func (a *App) ToggleProjectExpanded() {

@@ -227,6 +227,7 @@ func TestPaste_OnPasteContentBlockedByPopup(t *testing.T) {
 	mock := &mockSessionProvider{
 		sessions: []gui.SessionItem{
 			{ID: "s1", Name: "test", Status: "Running", TmuxWindow: "@0"},
+			{ID: "s2", Name: "other", Status: "Running", TmuxWindow: "@1"},
 		},
 	}
 	app.SetSessions(mock)
@@ -235,10 +236,10 @@ func TestPaste_OnPasteContentBlockedByPopup(t *testing.T) {
 	app.SetInputForwarder(fwd)
 	app.EnterFullScreenForTest("s1")
 
-	// Show popup
+	// Show popup from different session
 	app.ShowToolPopupForTest(&model.ToolNotification{
 		ToolName: "Write",
-		Window:   "@0",
+		Window:   "@1",
 	})
 
 	app.HandlePasteContentForTest("should be blocked")
@@ -273,6 +274,7 @@ func TestFullScreen_PopupBlocksForwarding(t *testing.T) {
 	mock := &mockSessionProvider{
 		sessions: []gui.SessionItem{
 			{ID: "s1", Name: "test", Status: "Running", TmuxWindow: "@0"},
+			{ID: "s2", Name: "other", Status: "Running", TmuxWindow: "@1"},
 		},
 	}
 	app.SetSessions(mock)
@@ -282,10 +284,10 @@ func TestFullScreen_PopupBlocksForwarding(t *testing.T) {
 
 	app.EnterFullScreenForTest("s1")
 
-	// Show popup — forwarding should be blocked
+	// Show popup from different session — forwarding should be blocked
 	app.ShowToolPopupForTest(&model.ToolNotification{
 		ToolName: "Write",
-		Window:   "@0",
+		Window:   "@1",
 	})
 
 	app.ForwardKeyForTest('h')
